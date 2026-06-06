@@ -256,10 +256,8 @@ runs:
       id: run
       shell: bash
       run: |
-        bun --no-env-file \
-          --config="${GITHUB_ACTION_PATH}/bunfig.toml" \
-          --tsconfig-override="${GITHUB_ACTION_PATH}/tsconfig.json" \
-          run ${GITHUB_ACTION_PATH}/src/entrypoints/run.ts
+        cd "${GITHUB_ACTION_PATH}"
+        bun --no-env-file run src/entrypoints/run.ts
       env:
         # Prepare inputs
         MODE: ${{ inputs.mode }}
