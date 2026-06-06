@@ -201,6 +201,7 @@ runs:
         ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ inputs.anthropic_service_account_id }}
         ANTHROPIC_WORKSPACE_ID: ${{ inputs.anthropic_workspace_id }}
         ANTHROPIC_OIDC_AUDIENCE: ${{ inputs.anthropic_oidc_audience }}
+        ANTHROPIC_AUTH_TOKEN: ${{ env.ANTHROPIC_AUTH_TOKEN }}
         ANTHROPIC_BASE_URL: ${{ env.ANTHROPIC_BASE_URL }}
         ANTHROPIC_CUSTOM_HEADERS: ${{ env.ANTHROPIC_CUSTOM_HEADERS }}
         # Only set provider flags if explicitly true, since any value (including "false") is truthy
