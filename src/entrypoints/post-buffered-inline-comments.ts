@@ -44,27 +44,36 @@ Comments:
 
 async function classifyComments(bodies: string[]): Promise<boolean[] | null> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+  const authToken = process.env.ANTHROPIC_AUTH_TOKEN;
+  const token = apiKey || authToken;
+  if (!token) {
     console.log(
-      "ANTHROPIC_API_KEY not set — skipping classification, posting all unconfirmed comments",
+      "ANTHROPIC_API_KEY/ANTHROPIC_AUTH_TOKEN not set — skipping classification, posting all unconfirmed comments",
     );
     return null;
   }
+
+  const baseUrl = (process.env.ANTHROPIC_BASE_URL ?? "https://api.anthropic.com").replace(/\/$/, "");
+  const model = process.env.ANTHROPIC_MODEL ?? "claude-haiku-4-5";
+
+  const authHeaders: Record<string, string> = authToken && !apiKey
+    ? { "authorization": `Bearer ${authToken}` }
+    : { "x-api-key": token };
 
   const prompt =
     CLASSIFICATION_PROMPT +
     bodies.map((b, i) => `${i + 1}. ${JSON.stringify(b)}`).join("\n");
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch(`${baseUrl}/v1/messages`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
+        ...authHeaders,
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5",
+        model,
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       }),
